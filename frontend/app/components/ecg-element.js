@@ -32,7 +32,8 @@ export default class extends P5Element {
       };
 
       p.draw = () => {
-        this.state.pulse = d = p.constrain(d - 0.02, 0, 1);
+        window.pulse = d = p.constrain(d - 0.02, 0, 1);
+        p.clear();
         // p.background(p.lerpColor(p.color(255, 0, 0), p.color(0, 255, 0), d));
         // p.text(data, 10, 10);
 
