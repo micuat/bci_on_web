@@ -20,7 +20,15 @@ export default function(state, emit) {
       <div class="p5">
         ${ this.state.cache(HydraElement, 'my-hydra').render({
           // code: "shape(4, 0.5, 0).scale(()=>window.pulse).layer(osc(30,0.1,1.5).mask(osc(30).thresh(.5,.1))).out()"
-          code: "osc(30,0.1,1.5).modulate(osc(20).kaleid(99).add(noise(1),.3),()=>window.emg*1+0).out()"
+          code: `
+          window.emg = 0;
+          src(o1).color(1,1,1,0.99).mask(src(o1).a().thresh(0.1,0.1)).modulate(
+            osc(6,0,1.5).brightness(-.5).modulate(noise(5).sub(gradient()),1),0.003
+            ).layer(
+            osc(30,0.1,1.5).mask(shape(999,()=>window.emg*0.3,0)).modulate(
+              osc(50).kaleid(99).add(noise(1),.3).brightness(-.5),0.1)
+            ).out(o1)
+          solid().layer(src(o1).mult(solid(1,1,1,0)).add(solid(0,0,0,1))).out()`
         }) }
       </div>
       <div class="p5">

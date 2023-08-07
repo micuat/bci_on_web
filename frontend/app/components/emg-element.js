@@ -32,7 +32,7 @@ export default class extends P5Element {
       };
 
       p.draw = () => {
-        window.emg = 1 - data[data.length - 1]?.v;
+        window.emg = data[data.length - 1]?.v;
         p.clear();
         // p.background(p.lerpColor(p.color(255, 0, 0), p.color(0, 255, 0), d));
         // p.text(data[data.length - 1]?.v, 10, 10);
@@ -42,7 +42,7 @@ export default class extends P5Element {
         p.beginShape();
         for (let i = 0; i < data.length; i++) {
           let x = p.map(i, 0, data.length, 0, p.width);
-          p.vertex(x, data[i].v * 10 + p.height / 2);
+          p.vertex(x, -data[i].v * 10 + p.height / 2);
         }
         p.endShape();
       };
