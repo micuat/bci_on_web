@@ -16,6 +16,7 @@ export default function(state, emit) {
     <div class=${ mainCss }>
       <a href="/ecg">ECG</a>
       <a href="/emg">EMG</a>
+      <a href="/eeg">EEG</a>
     </div>
   `;
 }
