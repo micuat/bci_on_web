@@ -26,11 +26,13 @@ import mainView from "./views/main.js";
 import ecgView from "./views/ecg.js";
 import emgView from "./views/emg.js";
 import eegView from "./views/eeg.js";
+import glitterView from "./views/glitter.js";
 
 app.route("/", mainView);
 app.route("/ecg", ecgView);
 app.route("/emg", emgView);
 app.route("/eeg", eegView);
+app.route("/glitter", glitterView);
 
 // start app
 app.mount("#choomount");

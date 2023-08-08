@@ -1,6 +1,8 @@
 import html from "choo/html";
 import { css } from "@emotion/css";
 
+import GlitterElement from '../components/glitter-element.js';
+
 const mainCss = css`
 .p5 {
   position: absolute;
@@ -14,10 +16,9 @@ const mainCss = css`
 export default function(state, emit) {
   return html`
     <div class=${ mainCss }>
-      <a href="/ecg">ECG</a>
-      <a href="/emg">EMG</a>
-      <a href="/eeg">EEG</a>
-      <a href="/glitter">glitter</a>
+      <div class="p5">
+        ${ this.state.cache(GlitterElement, 'my-glitter').render() }
+      </div>
     </div>
   `;
 }
