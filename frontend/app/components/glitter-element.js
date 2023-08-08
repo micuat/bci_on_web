@@ -35,43 +35,13 @@ document.onclick = function(event) {
     active = true;
 
     sine(()=>cc[16]*20).modulate(sine(()=>cc[17]*2), ()=>cc[18]*10)
-      .crush(()=>Math.floor(cc[19]/16))
+      .crush(()=>Math.floor(cc[19]/16 + 1))
     .feedback(()=>cc[20]/127, ()=>cc[21]/127*0.8).out()
   }
 }
 
-var mouseX = 0,
-  mouseY = 0,
-  time = 0,
+var time = 0,
   speed = 2;
-
-// document.onmousemove = function(event) {
-//   var eventDoc, doc, body;
-
-//   event = event || window.event; // IE-ism
-
-//   // If pageX/Y aren't available and clientX/Y are,
-//   // calculate pageX/Y - logic taken from jQuery.
-//   // (This is to support old IE)
-//   if (event.pageX == null && event.clientX != null) {
-//     eventDoc = (event.target && event.target.ownerDocument) || document;
-//     doc = eventDoc.documentElement;
-//     body = eventDoc.body;
-
-//     event.pageX =
-//       event.clientX +
-//       ((doc && doc.scrollLeft) || (body && body.scrollLeft) || 0) -
-//       ((doc && doc.clientLeft) || (body && body.clientLeft) || 0);
-//     event.pageY =
-//       event.clientY +
-//       ((doc && doc.scrollTop) || (body && body.scrollTop) || 0) -
-//       ((doc && doc.clientTop) || (body && body.clientTop) || 0);
-//   }
-
-//   mouseX = Math.max(0, Math.min(100000, event.pageX));
-//   mouseY = Math.max(0, Math.min(100000, event.pageY));
-//   // Use event.pageX / event.pageY here
-// };
 
 const updaters = [];
 const updater = () => {
@@ -246,19 +216,37 @@ export default class GlitterComponent extends Component {
       this.hydra.eval(this.code);
     }
     window.hydraSynth = this.hydra
-    //  if(environment !== 'local') {
-    // }
     this.emit('hydra loaded');
 
+    const iFocus = 2;
+
+    window.relax = 0;
+    this.state.socket.on("osc", (e) => {
+      const s = element.querySelector('#slide' + iFocus);
+      if (e.address == "/openbci/focus") {
+        if (e.args[0].value == 0) {
+          window.relax = Math.max(window.relax - 0.01, 0);
+        }
+        else {
+          window.relax = Math.min(window.relax + 0.01, 1);
+        }
+        cc[iFocus+16] = window.relax * 127;
+        s.value = window.relax * 127;
+      }
+    });
+
     for (let i = 0; i < 6; i++) {
-      const s = element.querySelector('#slide' + i);
-      cc[i+16] = s.value;
-      s.oninput = function () {
-        cc[i+16] = this.value;
+      if (i != iFocus) {
+        const s = element.querySelector('#slide' + i);
+        cc[i+16] = s.value;
+        s.oninput = function () {
+          cc[i+16] = this.value;
+        }
+      }
+      else {
+
       }
     }
-
-    // let midiLoaded;
 
     src(o0).modulate(src(o0).brightness(-0.5), ()=>(1-cc[20]/127)*0.1)
       .layer(
@@ -270,46 +258,6 @@ export default class GlitterComponent extends Component {
         .mask(shape(4,()=>1-cc[21]/127,0))
       )
       .out()
-
-
-    // // finally load midi
-
-    // // register WebMIDI
-    // if(navigator.requestMIDIAccess === undefined) {
-    //   midiLoaded = false;
-    //   onMIDIFailure();
-    // }
-    // else {
-    //   navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
-    // }
-
-    // function onMIDISuccess(midiAccess) {
-    //   console.log(midiAccess);
-    //   var inputs = midiAccess.inputs;
-    //   var outputs = midiAccess.outputs;
-    //   for (var input of midiAccess.inputs.values()) {
-    //     input.onmidimessage = getMIDIMessage;
-    //   }
-    //   if (inputs.length > 0) {
-    //     midiLoaded = true;
-    //   }
-    //   else {
-    //     midiLoaded = false;
-    //   }
-    // }
-
-    // function onMIDIFailure() {
-    //   console.log("Could not access your MIDI devices.");
-    //   midiLoaded = false;
-    // }
-
-    // let getMIDIMessage = function(midiMessage) {
-    //   var arr = midiMessage.data;
-    //   var index = arr[1];
-    //   console.log("Midi received on cc#" + index + " value:" + arr[2]); // uncomment to monitor incoming Midi
-    //   var val = (arr[2]) / 127.0; // normalize CC values to 0.0 - 1.0
-    //   cc[index] = val;
-    // };
   }
 
   update({ code }) {
