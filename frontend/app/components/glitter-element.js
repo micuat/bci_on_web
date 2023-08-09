@@ -1,8 +1,58 @@
 import html from 'choo/html';
 import Component from 'choo/component';
 
+import { css } from "@emotion/css";
+
 import Hydra from 'hydra-synth';
 import bitcrusher from '../bitcrusher.js';
+
+const mainCss = css`
+.label {
+  width: 130px;
+  background: white;
+}
+
+.slidecontainer {
+  width: 50%;
+  z-index: 3;
+  position: absolute;
+  display: inline;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 50px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.4;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 50px;
+  height: 50px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+  width: 50px;
+  height: 50px;
+  background: #4CAF50;
+  cursor: pointer;
+}
+`;
 
 //https://github.com/mattdiamond/synthjs/blob/master/synth.js
 function FeedbackDelayNode(context, delay, feedback){
@@ -236,15 +286,14 @@ export default class GlitterComponent extends Component {
     });
 
     for (let i = 0; i < 6; i++) {
+      const s = element.querySelector('#slide' + i);
+      s.oninput = function () {
+        cc[i+16] = this.value;
+      }
       if (i != iFocus) {
-        const s = element.querySelector('#slide' + i);
         cc[i+16] = s.value;
-        s.oninput = function () {
-          cc[i+16] = this.value;
-        }
       }
       else {
-
       }
     }
 
@@ -268,7 +317,7 @@ export default class GlitterComponent extends Component {
   createElement({ width = window.innerWidth, height = window.innerHeight, code } = {}) {
     this.code = code;
     return html`
-    <div style="width:100%;height:100%;">
+    <div class=${ mainCss } style="width:100%;height:100%;">
       <canvas id="hydra-canvas" class="bg-black" style="image-rendering:pixelated; width:100%;height:100%" width="${width}" height="${height}"></canvas>
       <div class="slidecontainer">
         <input type="range" min="0" max="127" value="0" class="slider" id="slide0">
